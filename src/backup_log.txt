@@ -1,0 +1,28 @@
+2026-04-22 19:48:20,428 - INFO - Local copy success: profile.bin
+2026-04-22 19:48:20,428 - INFO - Summary: 1 files copied locally.
+2026-04-22 19:48:40,587 - INFO - Local copy success: profile.bin
+2026-04-22 19:48:40,587 - INFO - Summary: 1 files copied locally.
+2026-04-22 19:48:47,553 - INFO - Local copy success: profile.bin
+2026-04-22 19:48:47,554 - INFO - Summary: 1 files copied locally.
+2026-04-22 19:50:27,500 - ERROR - General Cloud error: Invalid client secrets file ('Error opening file', 'client_secrets.json', 'No such file or directory', 2)
+2026-04-22 19:50:51,128 - ERROR - General Cloud error: Invalid client secrets file ('Error opening file', 'client_secrets.json', 'No such file or directory', 2)
+2026-04-22 19:51:10,649 - ERROR - General Cloud error: Invalid client secrets file ('Error opening file', 'client_secrets.json', 'No such file or directory', 2)
+2026-04-22 19:51:45,294 - ERROR - General Cloud error: Invalid client secrets file ('Error opening file', 'client_secrets.json', 'No such file or directory', 2)
+2026-04-22 19:52:21,057 - ERROR - General Cloud error: Invalid client secrets file ('Error opening file', 'client_secrets.json', 'No such file or directory', 2)
+2026-04-22 19:55:39,940 - ERROR - General Cloud error: Invalid client secrets file ('Error opening file', 'client_secrets.json', 'No such file or directory', 2)
+2026-04-22 20:02:18,983 - ERROR - Critical error: Client secrets file not found at C:\Users\zaets\windows_backup\src\..\client_secrets.json
+2026-04-22 20:03:00,063 - ERROR - Critical error: Client secrets file not found at C:\Users\zaets\windows_backup\src\..\client_secrets.json
+2026-04-22 20:03:26,406 - ERROR - Critical error: Client secrets file not found at C:\Users\zaets\windows_backup\src\..\client_secrets.json
+2026-04-22 20:03:49,597 - ERROR - Critical error: Client secrets file not found at C:\Users\zaets\windows_backup\src\..\client_secrets.json
+2026-04-22 20:04:24,612 - ERROR - Critical error: Client secrets file not found at C:\Users\zaets\windows_backup\src\..\client_secrets.json
+2026-04-22 20:05:53,955 - ERROR - Critical error: Client secrets file not found at C:\Users\zaets\windows_backup\src\..\client_secrets.json
+2026-04-22 20:07:06,356 - ERROR - Critical error: Client secrets file not found at C:\Users\zaets\windows_backup\src\..\../client_secrets.json
+2026-04-22 20:09:47,930 - INFO - Successfully retrieved access token
+2026-04-22 20:09:47,937 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-04-22 20:09:50,145 - INFO - Cloud upload success: Skyrim.ini
+2026-04-22 20:09:50,145 - INFO - Summary: 1 files uploaded to Drive.
+2026-04-22 20:10:19,975 - ERROR - General Cloud error: Invalid client secrets file ('Error opening file', 'client_secrets.json', 'No such file or directory', 2)
+2026-04-22 20:12:56,597 - INFO - Successfully retrieved access token
+2026-04-22 20:12:56,644 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-04-22 20:12:59,198 - INFO - Cloud upload success: Skyrim.ini
+2026-04-22 20:12:59,198 - INFO - Summary: 1 files uploaded to Drive.
