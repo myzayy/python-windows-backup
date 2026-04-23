@@ -2,13 +2,15 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox
 import json
 import os
-import winshell
 import re
+import winshell
 from win32com.client import Dispatch
 
-ctk.set_appearance_mode("System")
-ctk.set_default_color_theme("blue")
+# Set appearance and theme
+ctk.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
+ctk.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
+# Points to the root directory from the src folder
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), "..", "settings.json")
 
 
@@ -23,6 +25,7 @@ class ConfigApp(ctk.CTk):
         self.destination = ""
         self.startup_path = os.path.join(winshell.startup(), "WindowsBackup.lnk")
 
+        # Layout configuration
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -35,7 +38,7 @@ class ConfigApp(ctk.CTk):
                                         font=ctk.CTkFont(size=24, weight="bold"))
         self.label_title.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        # 1. File Selection
+        # 1. File Selection Section
         self.file_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         self.file_frame.grid(row=1, column=0, padx=20, pady=10, sticky="ew")
 
@@ -46,7 +49,7 @@ class ConfigApp(ctk.CTk):
                                        hover_color="#c0392b", command=self.clear_files)
         self.btn_clear.pack(side="top", fill="x", pady=5)
 
-        # 2. Destination Type
+        # 2. Destination Type Section
         self.dest_type_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         self.dest_type_frame.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
 
@@ -58,14 +61,17 @@ class ConfigApp(ctk.CTk):
                                               value=True, command=self.toggle_input)
         self.radio_cloud.pack(side="left", padx=20)
 
-        # 3. Inputs
+        # 3. Dynamic Inputs Section
         self.dynamic_frame = ctk.CTkFrame(self.main_frame)
         self.dynamic_frame.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
         self.dynamic_frame.grid_columnconfigure(0, weight=1)
 
         self.gdrive_id_var = ctk.StringVar()
-        self.entry_gdrive = ctk.CTkEntry(self.dynamic_frame, placeholder_text="Enter Google Drive Folder ID or Link",
-                                         textvariable=self.gdrive_id_var)
+        # Updated placeholder text
+        self.entry_gdrive = ctk.CTkEntry(self.dynamic_frame,
+                                         placeholder_text="Paste the link to your Google Drive folder",
+                                         placeholder_text_color="gray",
+                                         height=35)
         self.btn_dest = ctk.CTkButton(self.dynamic_frame, text="Select Destination Folder", fg_color="gray",
                                       command=self.select_dest)
 
@@ -75,7 +81,7 @@ class ConfigApp(ctk.CTk):
                                             variable=self.run_at_startup)
         self.switch_startup.grid(row=4, column=0, padx=20, pady=10)
 
-        # Status
+        # Status Label
         self.status_label = ctk.CTkLabel(self.main_frame, text="Ready", text_color="gray")
         self.status_label.grid(row=5, column=0, padx=20, pady=5)
 
@@ -89,15 +95,20 @@ class ConfigApp(ctk.CTk):
         self.toggle_input()
 
     def clear_files(self):
+        """Clears the list of selected files."""
         self.files = []
         self.status_label.configure(text="Files cleared", text_color="#e74c3c")
 
     def load_settings(self):
+        """Loads existing settings from the JSON file."""
         if os.path.exists(SETTINGS_FILE):
             try:
                 with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    self.gdrive_id_var.set(data.get("gdrive_folder_id", ""))
+                    g_id = data.get("gdrive_folder_id", "")
+                    if g_id:
+                        self.entry_gdrive.delete(0, 'end')  # Очищуємо поле
+                        self.entry_gdrive.insert(0, g_id)
                     self.backup_to_drive.set(data.get("backup_to_drive", False))
                     self.files = data.get("files", [])
                     self.destination = data.get("destination", "")
@@ -108,6 +119,7 @@ class ConfigApp(ctk.CTk):
                 pass
 
     def toggle_input(self):
+        """Changes UI based on backup type (Local or Cloud)."""
         if self.backup_to_drive.get():
             self.btn_dest.grid_forget()
             self.entry_gdrive.grid(row=0, column=0, padx=20, pady=20, sticky="ew")
@@ -116,12 +128,14 @@ class ConfigApp(ctk.CTk):
             self.btn_dest.grid(row=0, column=0, padx=20, pady=20, sticky="ew")
 
     def select_files(self):
+        """Opens a dialog to select files."""
         selected = filedialog.askopenfilenames(title="Choose Files")
         if selected:
             self.files = list(selected)
             self.status_label.configure(text=f"{len(self.files)} new files selected", text_color="#3498db")
 
     def select_dest(self):
+        """Opens a dialog to select local destination folder."""
         folder = filedialog.askdirectory(title="Choose Destination Folder")
         if folder:
             self.destination = folder
@@ -132,30 +146,31 @@ class ConfigApp(ctk.CTk):
         runner_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "runner.py"))
 
         if self.run_at_startup.get():
-            # Create shortcut
+            # Create shortcut in Startup folder
             shell = Dispatch('WScript.Shell')
             shortcut = shell.CreateShortCut(self.startup_path)
-            shortcut.Targetpath = "pythonw.exe"
+            shortcut.Targetpath = "pythonw.exe"  # Run without console window
             shortcut.Arguments = f'"{runner_path}"'
             shortcut.WorkingDirectory = os.path.dirname(runner_path)
             shortcut.IconLocation = "pythonw.exe"
             shortcut.save()
         else:
-            # Remove shortcut if exists
+            # Remove shortcut if it exists
             if os.path.exists(self.startup_path):
                 os.remove(self.startup_path)
 
     def save(self):
-        # Check file existence
+        """Validates input and saves settings to JSON file."""
+        # Check if files are selected
         if not self.files:
             messagebox.showwarning("Missing Data", "No files selected for backup.")
             return
 
         is_cloud = self.backup_to_drive.get()
-        g_id = self.gdrive_id_var.get().strip()
+        g_id = self.entry_gdrive.get().strip()
 
         if is_cloud:
-            # If its link
+            # Extract ID if a link was provided
             if "drive.google.com" in g_id:
                 try:
                     g_id = g_id.split('/')[-1].split('?')[0]
@@ -163,23 +178,19 @@ class ConfigApp(ctk.CTk):
                     messagebox.showerror("Error", "Invalid Google Drive link format.")
                     return
 
-            # ID folder validation
+            # Strict validation using regular expressions (only Latin letters, numbers, - and _)
             id_pattern = r"^[a-zA-Z0-9-_]+$"
             if not re.match(id_pattern, g_id) or len(g_id) < 20:
                 messagebox.showwarning("Validation Error",
-                                       "Invalid Google Drive ID.\n\n"
-                                       "A valid ID should:\n"
-                                       "- Only contain English letters and numbers\n"
-                                       "- Be at least 20 characters long\n"
-                                       "- Not contain Cyrillic characters")
+                                       "Please enter a valid Google Drive ID or Link (English letters only).")
                 return
         else:
-            # validation of local path
+            # Validation of local path existence
             if not self.destination or not os.path.exists(self.destination):
                 messagebox.showwarning("Validation Error", "Please select a valid local folder.")
                 return
 
-        # if all validations passed
+        # Attempt to save data and manage startup
         try:
             self._manage_startup()
 
@@ -197,7 +208,8 @@ class ConfigApp(ctk.CTk):
             messagebox.showinfo("Success", "Configuration saved!")
             self.status_label.configure(text="Settings saved successfully", text_color="#2ecc71")
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to save: {e}")
+            # Error handling for file system or permission issues
+            messagebox.showerror("Error", f"Failed to save configuration: {e}")
 
 
 if __name__ == "__main__":
